@@ -6,24 +6,22 @@ class Main():
     facilities = {}
     covenants = {}
 
-    def solution(self):
-        self.read_facilities()
-        self.read_covenants()
-        self.assign_loans()
+    def solution(self, covenants_file, facilities_file, loans_file):
+        self.read_facilities(facilities_file)
+        self.read_covenants(covenants_file)
+        self.assign_loans(loans_file)
 
-    def read_facilities(self):
-        with open('small/facilities.csv', newline='') as csvfile:
+    def read_facilities(self, facilties_file):
+        with open(facilties_file, newline='') as csvfile:
             facilities_reader = csv.DictReader(csvfile)
             for row in facilities_reader:
-                if row["bank_id"] not in self.facilities:
-                    self.facilities[row["bank_id"]] = []
                 self.facilities[(row["bank_id"], row["id"])] = {
                     'amount': row["amount"],
                     'interest_rate': row["interest_rate"]
                 }
 
-    def read_covenants(self):
-        with open('small/covenants.csv', newline='') as csvfile:
+    def read_covenants(self, covenants_file):
+        with open(covenants_file, newline='') as csvfile:
             covenants_reader = csv.DictReader(csvfile)
             for row in covenants_reader:
                 if not row["facility_id"]:
@@ -52,38 +50,92 @@ class Main():
                     loan_state = loan_state.upper()
                     if (default_max_likelihood >= default_likelihood or not default_max_likelihood):
                         banks.add((bank_id, facility['facility_id']))
+
+        #print(banks)
         return banks
 
-
     def get_cheapest_facility(self, banks, amount, default_likelihood, loan_interest_rate):
-        lowest_interest_rate = float("inf")
-        cheapeast_facility_yield = sys.maxsize
+        cheapest_interest_rate = float("inf")
+        #cheapeast_facility_yield = sys.maxsize
+        cheapest_facility = {}
+        cheapest_bank_id = None
+        cheapest_facility_id = None
 
         for bank_id, facility_id in banks:
             facility = self.facilities[(bank_id, facility_id)]
             facility_amount = float(facility["amount"])
             facility_interest_rate = float(facility["interest_rate"])
             #facility["id"] == facility_id or facility_id == "ALL")
-            if  facility_amount >= amount and facility_interest_rate < lowest_interest_rate:
-                lowest_interest_rate = facility_interest_rate
-                cheapeast_facility_yield = (1 - default_likelihood) * loan_interest_rate * amount \
-                            - default_likelihood * amount \
-                            - facility_interest_rate * amount
-                facility["amount"] = float(facility["amount"]) - amount
+            if  facility_amount >= amount and facility_interest_rate < cheapest_interest_rate:
+                cheapest_interest_rate = facility_interest_rate
+                cheapest_facility = facility
+                cheapest_bank_id = bank_id
+                cheapest_facility_id = facility_id
 
-        print((facility_id, bank_id, cheapeast_facility_yield))
-        return (facility_id, bank_id, cheapeast_facility_yield)
+        if facility_id == "ALL":
+            for facility_tuple in self.facilities:
+                if facility_tuple[0] == bank_id:
+                    facility = self.facilities[facility_tuple]
+                    facility_amount = float(facility["amount"])
+                    facility_interest_rate = float(facility["interest_rate"])
+                    # facility["id"] == facility_id or facility_id == "ALL")
+                    if facility_amount >= amount and facility_interest_rate < cheapest_interest_rate:
+                        cheapest_interest_rate = facility_interest_rate
+                        cheapest_facility = facility
+                        cheapest_bank_id = bank_id
+                        cheapest_facility_id = facility_tuple[1]
 
-    def assign_loans(self):
-        with open('small/loans.csv', newline='') as csvfile:
+        if "amount" in cheapest_facility:
+            cheapeast_facility_yield = (1 - default_likelihood) * loan_interest_rate * amount \
+                                   - default_likelihood * amount \
+                                   - cheapest_interest_rate * amount
+            cheapest_facility["amount"] = float(cheapest_facility["amount"]) - amount
+        else:
+            return (None, None, None)
+
+
+
+
+        #print((bank_id, facility_id , cheapeast_facility_yield))
+        return (cheapest_bank_id, cheapest_facility_id, cheapeast_facility_yield)
+
+    def assign_loans(self, loans_file):
+        with open(loans_file, newline='') as csvfile:
             loan_reader = csv.DictReader(csvfile)
+            yields = {}
+            assignments = {}
             for row in loan_reader:
                 banks = self.get_covenant_matching_facilities(row["default_likelihood"], row["state"])
-                self.get_cheapest_facility(banks, float(row["amount"]), float(row["default_likelihood"]),
+                bank_id, facility_id, cheapeast_facility_yield = self.get_cheapest_facility(banks, float(row["amount"]), float(row["default_likelihood"]),
                                            float(row["interest_rate"]))
-            # interest_rate,amount,id,default_likelihood,state
+                print (row["id"], bank_id, facility_id, cheapeast_facility_yield)
+                if cheapeast_facility_yield is None:
+                    continue
+                else:
+                    if facility_id not in yields:
+                        yields[facility_id] = 0.0
+                    yields[facility_id] += cheapeast_facility_yield
+                    assignments[row["id"]] = facility_id
+
+            with open('output/'+loans_file.split("/")[0] + 'yields.csv', 'w', newline='') as csv_file:
+                    fieldnames = ['facility_id', 'expected_yield']
+                    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+
+                    writer.writeheader()
+                    for facility_id, expected_yield in yields.items():
+                        writer.writerow({'facility_id': facility_id, 'expected_yield': expected_yield})
+
+            with open('output/'+loans_file.split("/")[0] + 'assignments.csv', 'w', newline='') as csv_file:
+                    fieldnames = ['loan_id','facility_id']
+                    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+
+                    writer.writeheader()
+                    for loan_id , facility_id in assignments.items():
+                        writer.writerow({'loan_id': loan_id , 'facility_id': facility_id})
 
 
 if __name__ == '__main__':
     main = Main()
-    main.solution()
+    main.solution("small/covenants.csv","small/facilities.csv","small/loans.csv")
+    main.solution("large/covenants.csv", "large/facilities.csv", "large/loans.csv")
+
