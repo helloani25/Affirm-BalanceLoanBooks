@@ -86,8 +86,6 @@ class Main():
                     cheapest_bank_id = bank_id
                     cheapest_facility_id = facility_id
 
-
-
         if "amount" in cheapest_facility:
             cheapeast_facility_yield = (1 - default_likelihood) * loan_interest_rate * amount \
                                    - default_likelihood * amount \
@@ -95,10 +93,6 @@ class Main():
             cheapest_facility["amount"] = float(cheapest_facility["amount"]) - amount
         else:
             return (None, None, None)
-
-
-
-
         #print((bank_id, facility_id , cheapeast_facility_yield))
         return (cheapest_bank_id, cheapest_facility_id, cheapeast_facility_yield)
 
