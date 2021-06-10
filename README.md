@@ -76,6 +76,6 @@ m = number of loans
 n = no of covenants or no of facilities depending which ever is larger
 All the covenants have to be visited to get all facilities that meet the constraints
 Then for each combination of facility and bank from the previous step, we are visiting all the facilities.
-If facilities is absent in a covenant, we have no other way to get all the facilties associated with the bank, then find the cheapeast interest rate
+If facilities is absent in a covenant, we have no other way but to get all the facilties associated with the bank, then find the cheapeast interest rate
 ```
 ```
