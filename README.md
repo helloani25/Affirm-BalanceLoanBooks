@@ -64,7 +64,7 @@ What we want here is add the loan to a facility and check if are able fit all th
 
 https://www.localsolver.com/docs/last/exampletour/binpacking.html
 
-This looks closes to the problem we are trying to solve here.
+This looks closest to the problem we are trying to solve here.
 
             
 ```
