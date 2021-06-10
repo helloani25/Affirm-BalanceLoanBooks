@@ -27,8 +27,6 @@ class Main():
                     row["facility_id"] = "ALL"
                 if row["bank_id"] not in self.covenants:
                     self.covenants[row["bank_id"]] = []
-                if row["max_default_likelihood"] is None:
-                    row["max_default_likelihood"] = 1
                 self.covenants[row["bank_id"]].append({'facility_id': row["facility_id"],  # Can be None
                                                        'max_default_likelihood': row["max_default_likelihood"],
                                                        # Can be None
