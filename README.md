@@ -19,7 +19,7 @@ def rule(variable):
     else:
         return False
 # using filter function
-filtered = filter(fule, sequence)
+filtered = filter(rule, sequence)
 
 This example. We can explore how to create rules and then create filters.
 https://zerosteiner.github.io/rule-engine/getting_started.html  - Looks like a rule engine that can leveraged to create rules for the covenants
