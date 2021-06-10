@@ -32,6 +32,7 @@ finance team emailing your team and describing the addition with a new set of CS
 To allow arbitrary number of files to be added, we must use Spark to read files from the hadoop if there are large number of files. Optionally having Apache hive allows better manipulation of data and supports efficient compression
 
 Spark allows better maninpulation of data that is more effective when transformation has to be done to the  data.
+We could write the facilities to a DB as well to save time in the future. It can be a key value store.
 ```
 4. Your solution most likely simulates the streaming process by directly calling a method in
 your code to process the loans inside of a for loop. What would a REST API look like for
