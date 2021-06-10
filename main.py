@@ -63,27 +63,30 @@ class Main():
 
         for bank_id, facility_id in banks:
             facility = self.facilities[(bank_id, facility_id)]
-            facility_amount = float(facility["amount"])
-            facility_interest_rate = float(facility["interest_rate"])
-            #facility["id"] == facility_id or facility_id == "ALL")
-            if  facility_amount >= amount and facility_interest_rate < cheapest_interest_rate:
-                cheapest_interest_rate = facility_interest_rate
-                cheapest_facility = facility
-                cheapest_bank_id = bank_id
-                cheapest_facility_id = facility_id
 
-        if facility_id == "ALL":
-            for facility_tuple in self.facilities:
-                if facility_tuple[0] == bank_id:
-                    facility = self.facilities[facility_tuple]
-                    facility_amount = float(facility["amount"])
-                    facility_interest_rate = float(facility["interest_rate"])
-                    # facility["id"] == facility_id or facility_id == "ALL")
-                    if facility_amount >= amount and facility_interest_rate < cheapest_interest_rate:
-                        cheapest_interest_rate = facility_interest_rate
-                        cheapest_facility = facility
-                        cheapest_bank_id = bank_id
-                        cheapest_facility_id = facility_tuple[1]
+            if facility_id == "ALL":
+                for facility_tuple in self.facilities:
+                    if facility_tuple[0] == bank_id:
+                        facility = self.facilities[facility_tuple]
+                        facility_amount = float(facility["amount"])
+                        facility_interest_rate = float(facility["interest_rate"])
+                        # facility["id"] == facility_id or facility_id == "ALL")
+                        if facility_amount >= amount and facility_interest_rate < cheapest_interest_rate:
+                            cheapest_interest_rate = facility_interest_rate
+                            cheapest_facility = facility
+                            cheapest_bank_id = bank_id
+                            cheapest_facility_id = facility_tuple[1]
+
+            else:
+                facility_amount = float(facility["amount"])
+                facility_interest_rate = float(facility["interest_rate"])
+                if facility_amount >= amount and facility_interest_rate < cheapest_interest_rate:
+                    cheapest_interest_rate = facility_interest_rate
+                    cheapest_facility = facility
+                    cheapest_bank_id = bank_id
+                    cheapest_facility_id = facility_id
+
+
 
         if "amount" in cheapest_facility:
             cheapeast_facility_yield = (1 - default_likelihood) * loan_interest_rate * amount \
