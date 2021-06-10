@@ -28,11 +28,11 @@ https://zerosteiner.github.io/rule-engine/getting_started.html  - Looks like a r
 3. How would you architect your solution as a production service wherein new facilities can
 be introduced at arbitrary points in time. Assume these facilities become available by the
 finance team emailing your team and describing the addition with a new set of CSVs.
-
+```
 To allow arbitrary number of files to be added, we must use Spark to read files from the hadoop if there are large number of files. Optionally having Apache hive allows better manipulation of data and supports efficient compression
 
 Spark allows better maninpulation of data that is more effective when transformation have to be done data.
-
+```
 4. Your solution most likely simulates the streaming process by directly calling a method in
 your code to process the loans inside of a for loop. What would a REST API look like for
 this same service? Stakeholders using the API will need, at a minimum, to be able to
