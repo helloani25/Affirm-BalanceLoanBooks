@@ -10,7 +10,7 @@ of new, as-of-yet unknown types of covenants, beyond just maximum default likeli
 and state restrictions?
 ```
 I would consider chaining a series of filters and then chain them together rather than using if else.
-We can a Rule class that create a rule
+We can a Rule class that create a rule or a rule file
 
 def rule(variable):
     letters = ['a', 'e', 'i', 'o', 'u']
