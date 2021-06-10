@@ -1,5 +1,4 @@
 import csv
-import sys
 
 
 class Main():
@@ -28,10 +27,12 @@ class Main():
                     row["facility_id"] = "ALL"
                 if row["bank_id"] not in self.covenants:
                     self.covenants[row["bank_id"]] = []
+                if row["max_default_likelihood"] is None:
+                    row["max_default_likelihood"] = 1
                 self.covenants[row["bank_id"]].append({'facility_id': row["facility_id"],  # Can be None
                                                        'max_default_likelihood': row["max_default_likelihood"],
                                                        # Can be None
-                                                       'banned_state': row["banned_state"].upper()  # Can be None
+                                                       'banned_state': row["banned_state"]  # Can be None
                                                        })
 
     # bank_id , facility_id,max_default_likelihood,banned_state
@@ -47,7 +48,6 @@ class Main():
             for facility in self.covenants[bank_id]:
                 if (bank_id, facility["facility_id"]) not in banned:
                     default_max_likelihood = facility['max_default_likelihood']
-                    loan_state = loan_state.upper()
                     if (default_max_likelihood >= default_likelihood or not default_max_likelihood):
                         banks.add((bank_id, facility['facility_id']))
 
